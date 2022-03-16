@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      body {
+        background-color: rgb(255, 172, 251);
+        text-align: center;
+      }
+      .board {
+        background-color: rgb(248, 132, 204);
+        display: inline-block;
+        border-radius: 30px;
+        font-weight: bold;
+        padding: 100px;
+      }
+      .explan {
+        margin: 50px;
+      }
+      a {
+        text-decoration: none;
+      }
+      .start_button {
+        margin: 20px;
+        padding: 30px;
+        background-color: #7d0096;
+        border-radius: 20px;
+        color: white;
+      }
+      .start_button:hover {
+        background-color: rgb(97, 1, 105);
+      }
+      .quiz_text {
+        margin: 50px;
+      }
+      .time {
+        color: red;
+        font-weight: bold;
+        font-size: 35px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="board">
+      <h1>넌센스 Quiz</h1>
+      <p class="time" id="time"></p>
+      <p class="explan">3문제 - 중복 O</p>
+      <h3><a href="#" id="start" class="start_button">시작</a></h3>
+      <h3 class="quiz_text" id="quiz"></h3>
+      <form id="input_form" style="display: none">
+        <input type="text" id="input_text" />
+      </form>
+      <p id="score"></p>
+    </div>
+    <script>
+      let score = 0,
+        count = 0,
+        randomNum = 0,
+        second = 0;
+      let timer = "";
+      const quizArray = [
+        { quiz: "왕이 넘어지면?", answer: "킹콩" },
+        { quiz: "바나나가 웃으면?", answer: "바나나킥" },
+        { quiz: "미소의 반댓말은?", answer: "당기소" },
+        { quiz: "왕이 꿈틀대면?", answer: "왕꿈틀이" },
+        { quiz: "신이 화가 나면?", answer: "신발끈" },
+      ];
+      function Time() {
+        $("#time").text(second);
+        second++;
+      }
+      $("#start").on("click", function (e) {
+        e.preventDefault();
+
+        $("#input_form").hide().slideDown();
+        $("#input_form").children().first().focus();
+
+        quizstart();
+        count = 0;
+        score = 0;
+        $("#score").text("");
+        timer = setInterval(Time, 1000);
+      });
+
+      $("#input_form").on("submit", function (e) {
+        e.preventDefault();
+
+        const answer = quizArray[randomNum].answer;
+        const $user = $("#input_form").children().first().val();
+        count++;
+
+        if ($user == answer) {
+          score++;
+          $("#score").text("3개 중 " + score + "개 맞췄습니다");
+        }
+
+        quizstart();
+        $("#input_form").children().first().val("");
+
+        if (count == 3) {
+          $("#input_form").hide();
+          $("#quiz").text("");
+          $("#score").html(
+            "3개 중" + score + " 개 맞췄습니다<br> " + second + "초 소요"
+          );
+          count = 0;
+          score = 0;
+          $("#time").text("");
+          clearInterval(timer);
+          second = 0;
+        }
+      });
+
+      function quizstart() {
+        randomNum = Math.floor(Math.random() * quizArray.length);
+        $("#quiz").text(quizArray[randomNum].quiz);
+      }
+    </script>
+  </body>
+</html>
