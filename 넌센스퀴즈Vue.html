@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1>넌센스 Quiz</h1>
+      <p>{{ time }} 초</p>
+
+      <p class="explan">3문제 - 중복 O</p>
+
+      <h3><a href="#" v-on:click.prevent="showBtn">시작</a></h3>
+
+      <form v-if="show" v-on:submit.prevent="onSubmit">
+        <h3>{{ quiz }}</h3>
+        <input type="text" v-model="useranswer" />
+      </form>
+      <p v-show="show">{{ score }} 점 입니다</p>
+
+      <ul>
+        <li v-for="quiz in quizArray">{{ quiz.quiz }}</li>
+      </ul>
+    </div>
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          show: false,
+          time: 0,
+          timeId: "",
+          useranswer: "",
+          random: 0,
+          quizArray: [
+            { quiz: "왕이 넘어지면?", answer: "킹콩" },
+            { quiz: "바나나가 웃으면?", answer: "바나나킥" },
+            { quiz: "미소의 반댓말은?", answer: "당기소" },
+            { quiz: "왕이 꿈틀대면?", answer: "왕꿈틀이" },
+            { quiz: "신이 화가 나면?", answer: "신발끈" },
+          ],
+          score: 0,
+          count: 0,
+        },
+        methods: {
+          showBtn() {
+            this.quizArray = this.quizArray.concat(this.usedQuiz);
+            this.score = 0;
+            this.count = 0;
+            this.show = !this.show;
+            clearTimeout(this.timeId);
+            this.time = 0;
+            if (this.show) {
+              this.timeId = setInterval(() => {
+                this.time++;
+              }, 1000);
+            }
+            this.startquiz();
+          },
+          onSubmit() {
+            if (this.useranswer == this.quizArray[this.random].answer) {
+              this.score++;
+              this.usedQuiz.push(this.quizArray.splice(this.random, 1)[0]);
+            }
+
+            this.startquiz();
+
+            this.count++;
+            this.useranswer = "";
+
+            if (this.count == 3) {
+              this.show = false;
+              clearTimeout(this.timeId);
+            }
+          },
+          startquiz() {
+            this.random = Math.floor(Math.random() * this.quizArray.length);
+          },
+        },
+        computed: {
+          quiz() {
+            return this.quizArray[this.random].quiz;
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
